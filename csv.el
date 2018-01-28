@@ -26,7 +26,7 @@
 (defun comp (element) "変換機" 
   ;; 要素である文字列の先頭を検査する
   (if (not (= (length element) 0))
-      (if (string-match "[1-9]" (substring element 0 1)) 
+      (if (string-match "[1-9][0-9]*" (substring element 0 1)) 
           ;; 要素を数に変換する
           (string-to-number element)
         ;; そのままにする
@@ -73,6 +73,8 @@
     (switch-to-buffer pre-buffer)
     source-string)) ;; 戻り値
 
+
+
 (defun clear-messages ()
   (let
       ((message-buffer (get-buffer "*Messages*"))
@@ -83,11 +85,10 @@
 
 
 (defun csv-read (filename) "csvデータを読み込むメイン"
+  (interactive "fFilename:")
   (let ((stack '()))
     (setq output '())
     (get-record (split-record (get-src-string filename)))))
-
-
 
 
 (defun csv-write (filename　&option output) "csvデータ出力"
@@ -126,8 +127,30 @@
     ;;バッファを戻す
     (switch-to-buffer pre-buffer)))
 
-(csv-read filename)
+(csv-read)
+
 (csv-write filename output)
+
+
+
+;; バッファ操作サンプル
+(defun append-to-buffer (buffer start end)
+(let ((oldbuf (current-buffer)))
+  (save-current-buffer
+    (set-buffer (get-buffer-create buffer))
+    (insert-buffer-substring oldbuf start end))))
+(append-to-buffer "test" 1 500)
+
+;;マーカー操作
+(defun marker-samp ()
+  (let ((m1 (make-marker)))
+    (set-marker m1 1)
+    (goto-char (point-min))
+    (insert "A")
+    (set-marker m1 nil)))
+(marker-samp)
+
+
 
 
 
